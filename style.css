@@ -193,7 +193,7 @@
 /*=============== PMPro styles ===============*/
 
 .pmpro_checkout-field-bfirstname, .pmpro_checkout-field-blastname {
-/* 	display: none; */
+    display: none;
 }
 
 body.pmpro-checkout {
@@ -721,7 +721,7 @@ hr {
     .wp-block-latest-posts {
         flex-wrap: wrap !important;
     }
-    
+
     .wp-block-latest-posts.is-grid li {
         margin-right: 0 !important;
     }

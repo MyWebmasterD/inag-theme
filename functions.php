@@ -3,6 +3,8 @@
 $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
 define('TEAM_MEMBERS_PLUGIN', 'team-members/tmm.php');
 define('PMPRO_PLUGIN', 'paid-memberships-pro/paid-memberships-pro.php');
+define('PMPRO_REGISTER_HELPER_PLUGIN', 'pmpro-register-helper/pmpro-register-helper.php');
+define('STRIPE_FEE', 2.65);
 
 /* Rearrange nav bar for logged in/out users */
 add_filter('wp_nav_menu_objects', function($items, $args) {
@@ -185,8 +187,8 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
 
         return pmpro_login_redirect($redirect_to, $request, $user);
     }, 10, 3);
-	
-	/* Custom order codes for PMPro orders */
+
+    /* Custom order codes for PMPro orders */
     add_filter('pmpro_random_code', function () {
         global $wpdb;
 
@@ -226,11 +228,104 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         ));
     });
 
+    /* Remove the non-member login/register message on archive pages (only shows when viewing a single post or page) */
+    add_action('wp', function () {
+        if (!is_single()) {
+            remove_filter('the_excerpt', 'pmpro_membership_excerpt_filter', 15);
+        }
+    });
+
+    /* Change email address for all admin related emails in PMPro */
+    add_filter('pmpro_email_recipient', function ($user_email, $email) {		
+        if (strpos($email->template, '_admin') !== false) {
+            $user_email = 'info@inag.it';
+        }
+        
+        return $user_email;
+    }, 10, 2);
+
+    /* Add Stripe fee to membership payment */
+    add_filter('pmpro_checkout_level', function ($level) {
+        if (!empty($_REQUEST['gateway'])) {
+            if ($_REQUEST['gateway'] == 'stripe') {
+                $level->initial_payment = $level->initial_payment + STRIPE_FEE; //Updates initial payment value
+                $level->billing_amount = $level->billing_amount + STRIPE_FEE; //Updates recurring payment value 
+            }
+        }
+     
+        return $level;
+    });
+
     /* Add extra PMPro confirmation fields */
     add_action('pmpro_invoice_bullets_bottom', function ($pmpro_invoice) {
         printf('<li><strong>%s:</strong> %s</li>', __('Codice Fiscale', 'generatepresschild'), get_user_meta($pmpro_invoice->user->ID, 'fiscal_code', true));
     });
 
+    if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
+        
+        /* Add meta fields to user confirmation email */
+        add_filter('pmpro_email_filter', function ($email) {
+            global $wpdb;
+
+            // Only update user confirmation emails
+            if (!empty($email) && (strpos($email->template, 'checkout') !== false) && (strpos($email->template, 'admin') === false)) {
+                //get the user_id from the email
+                $user_id = $wpdb->get_var("SELECT ID FROM $wpdb->users WHERE user_email = '" . $email->data['user_email'] . "' LIMIT 1");
+
+                if (!empty($user_id)) {
+                    //get meta fields
+                    $fields = pmprorh_getProfileFields($user_id);
+
+                    //add to bottom of email
+                    if (!empty($fields)) {
+                        foreach ($fields as $field) {
+                            if (!is_a($field, 'PMProRH_Field')) {
+                                continue;
+                            }
+
+                            $value = get_user_meta($user_id, $field->meta_key, true);
+
+                            if (($field->type == 'file') && is_array($value) && !empty($value['fullurl'])) {
+                                $field_value = $value['fullurl'];
+                            } elseif (is_array($value)) {
+                                $field_value = implode(', ', $value);
+                            } else {
+                                $field_value = $value;
+                            }
+
+                            $email->body .= "<p>$field->label: $field_value</p>";
+                        }
+                    }
+                }
+
+                $email->body .= "<hr><p>Operazione fuori campo IVA ex artt. 1 e 4 DPR 633/72. Le ricevute relative all’incasso delle quote associative non sono assoggettate all’imposta di bollo.</p>";
+                $email->body .= "<img src='" . site_url('/wp-content/uploads/digital-signature.jpeg') . "' alt='Digital signature' width='200' height='128'>";
+            }
+
+            $email->body .= "<p>" . __('Cordialmente', 'generatepresschild') . ", !!sitename!!.</p>";
+
+            return $email;
+        });
+
+        /* Adding the Fiscal Code column to the Users table */
+        add_action('manage_users_columns', function ($column_headers) {
+            unset($column_headers['posts']);
+
+            $offset = array_search('role', array_keys($column_headers));
+
+            return array_merge(
+                array_slice($column_headers, 0, $offset),
+                array('fiscal_code' => __('Codice Fiscale', 'generatepresschild')),
+                array_slice($column_headers, $offset)
+            );
+        });
+
+        /* Populating the Fiscal Code column in the Users table */
+        add_action('manage_users_custom_column', function ($value, $column_name, $user_id) {
+            return $column_name == 'fiscal_code' ? get_user_meta($user_id, 'fiscal_code', true) : $value;
+        }, 10, 3);
+        
+    }
 }
 
 /* Adding new block styles to Gutenberg */
@@ -246,58 +341,18 @@ add_action('enqueue_block_editor_assets', function () {
     );
 });
 
-/* Adding the Fiscal Code column to the Users table */
-add_action('manage_users_columns', function ($column_headers) {
-    unset($column_headers['posts']);
-
-    $offset = array_search('role', array_keys($column_headers));
-
-    return array_merge(
-        array_slice($column_headers, 0, $offset),
-        array('fiscal_code' => __('Codice Fiscale', 'generatepresschild')),
-        array_slice($column_headers, $offset)
-    );
-});
-
-/* Populating the Fiscal Code column in the Users table */
-add_action('manage_users_custom_column', function ($value, $column_name, $user_id) {
-    return $column_name == 'fiscal_code' ? get_user_meta($user_id, 'fiscal_code', true) : $value;
-}, 10, 3);
-
-/* Remove the non-member login/register message on archive pages. (Only shows when viewing a single post or page). */
-function my_pmpro_remove_non_member_text_archives() {
-	if ( ! is_single() ) {
-		remove_filter('the_excerpt', 'pmpro_membership_excerpt_filter', 15);
-	}
-}
-add_action( 'wp', 'my_pmpro_remove_non_member_text_archives' );
-
-/**
- * Change the email address for all admin related emails in Paid Memberships Pro.
- */
-function my_pmpro_change_admin_to_email( $user_email, $email ){		
-    if( strpos( $email->template, "_admin" ) !== false ) {
-	$user_email = 'info@inag.it';
-    }
-	
-	return $user_email;
-}
-add_filter( "pmpro_email_recipient", "my_pmpro_change_admin_to_email", 10, 2 );
-
-
-
-// Remove Yoast 'SEO Manager' role
+/* Remove Yoast 'SEO Manager' role */
 if ( get_role('wpseo_manager') ) {
     remove_role( 'wpseo_manager' );
 }
 
-// Remove Yoast 'SEO Editor' role
+/* Remove Yoast 'SEO Editor' role */
 if ( get_role('wpseo_editor') ) {
     remove_role( 'wpseo_editor' );
 }
 
 /* Remove default dashoboard widgets */
-function remove_dashboard_widgets() {
+add_action('wp_dashboard_setup', function () {
     global $wp_meta_boxes;
   
     unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
@@ -311,8 +366,7 @@ function remove_dashboard_widgets() {
     unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
     unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
 
-    remove_meta_box( 'wpseo-dashboard-overview', 'dashboard', 'side' );
+    remove_meta_box('wpseo-dashboard-overview', 'dashboard', 'side');
 	remove_meta_box('wordfence_activity_report_widget', 'dashboard', 'normal');
 	remove_meta_box('google_dashboard_widget', 'dashboard', 'normal');
-}
-add_action( 'wp_dashboard_setup', 'remove_dashboard_widgets' );
+});
