@@ -245,64 +245,65 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }, 10, 2);
 
     /* Add Stripe fee to membership payment */
-    add_filter('pmpro_checkout_level', function ($level) {
-        if (!empty($_REQUEST['gateway'])) {
-            if ($_REQUEST['gateway'] == 'stripe') {
-                $level->initial_payment = $level->initial_payment + STRIPE_FEE; //Updates initial payment value
-                $level->billing_amount = $level->billing_amount + STRIPE_FEE; //Updates recurring payment value 
-            }
+    /*add_filter('pmpro_checkout_level', function ($level) {
+        global $gateway;
+
+        if ($gateway == 'stripe') {
+            $level->initial_payment = $level->initial_payment + STRIPE_FEE; // Updates initial payment value
+            $level->billing_amount = $level->billing_amount + STRIPE_FEE; // Updates recurring payment value
         }
      
         return $level;
-    });
-
-    /* Add extra PMPro confirmation fields */
-    add_action('pmpro_invoice_bullets_bottom', function ($pmpro_invoice) {
-        printf('<li><strong>%s:</strong> %s</li>', __('Codice Fiscale', 'generatepresschild'), get_user_meta($pmpro_invoice->user->ID, 'fiscal_code', true));
-    });
+    });*/
 
     if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
         
-        /* Add meta fields to user confirmation email */
+        /* Overriding user confirmation email template */
         add_filter('pmpro_email_filter', function ($email) {
-            global $wpdb;
 
-            // Only update user confirmation emails
-            if (!empty($email) && (strpos($email->template, 'checkout') !== false) && (strpos($email->template, 'admin') === false)) {
-                //get the user_id from the email
-                $user_id = $wpdb->get_var("SELECT ID FROM $wpdb->users WHERE user_email = '" . $email->data['user_email'] . "' LIMIT 1");
-
-                if (!empty($user_id)) {
-                    //get meta fields
-                    $fields = pmprorh_getProfileFields($user_id);
-
-                    //add to bottom of email
-                    if (!empty($fields)) {
-                        foreach ($fields as $field) {
-                            if (!is_a($field, 'PMProRH_Field')) {
-                                continue;
-                            }
-
-                            $value = get_user_meta($user_id, $field->meta_key, true);
-
-                            if (($field->type == 'file') && is_array($value) && !empty($value['fullurl'])) {
-                                $field_value = $value['fullurl'];
-                            } elseif (is_array($value)) {
-                                $field_value = implode(', ', $value);
-                            } else {
-                                $field_value = $value;
-                            }
-
-                            $email->body .= "<p>$field->label: $field_value</p>";
-                        }
-                    }
-                }
-
-                $email->body .= "<hr><p>Operazione fuori campo IVA ex artt. 1 e 4 DPR 633/72. Le ricevute relative all’incasso delle quote associative non sono assoggettate all’imposta di bollo.</p>";
-                $email->body .= "<img src='" . site_url('/wp-content/uploads/digital-signature.jpeg') . "' alt='Digital signature' width='200' height='128'>";
+            // Only override user confirmation emails that have invoices
+            if (
+                empty($email) || (strpos($email->template, 'checkout') === false) ||
+                (strpos($email->template, 'admin') !== false) || empty($email->data['invoice_id'])
+            ) {
+                return $email;
             }
 
-            $email->body .= "<p>" . __('Cordialmente', 'generatepresschild') . ", !!sitename!!.</p>";
+            $order = new MemberOrder($email->data['invoice_id']);
+
+            // Make sure we have a real order
+            if (empty($order) || empty($order->id)) {
+                return $email;
+            }
+
+            // Update subject
+            $email->subject = 'Conferma di associazione a INAG.';
+
+            // Loading invoice values
+            $code = $order->code;
+            $name = $order->billing->name;
+            $street = $order->billing->street;
+            $state = $order->billing->state;
+            $zip = $order->billing->zip;
+            $country = $order->billing->country;
+            $today = date_i18n(get_option('date_format'), $order->timestamp);
+            $formatted_total = number_format((float)$order->total, 2, ',', ' ');
+            $payment_year = date('Y', $order->timestamp);
+
+            if (empty($order->gateway)) {
+                $payment_method = __('Test', 'generatepresschild');
+            } elseif ($order->gateway == 'check') {
+                $payment_method = __('Bonifico', 'generatepresschild');
+            } elseif ($order->gateway == 'stripe') {
+                $payment_method = __('Carta di credito', 'generatepresschild');
+            } else {
+                $payment_method = __('Non specificato', 'generatepresschild');
+            }
+
+            // Update body
+            ob_start();
+            include 'email/checkout.php';
+            $email->body = ob_get_clean();
 
             return $email;
         });
