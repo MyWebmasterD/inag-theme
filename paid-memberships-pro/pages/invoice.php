@@ -27,7 +27,7 @@
                 }
         ?>
                 <h4>
-                    <?php printf(__('Ricevuta #%s on %s', 'generatepresschild' ), $pmpro_invoice->code, date_i18n(get_option('date_format'), $pmpro_invoice->getTimestamp())) ?>
+                    <?php printf(__('Ricevuta #%s del %s', 'generatepresschild' ), $pmpro_invoice->code, date_i18n(get_option('date_format'), $pmpro_invoice->getTimestamp())) ?>
                 </h4>
 
                 <p>

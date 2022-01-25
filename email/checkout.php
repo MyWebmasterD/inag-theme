@@ -34,7 +34,7 @@
         </table>
 
         <h4>
-            <?php printf(__('Ricevuta #%s on %s', 'generatepresschild' ), $code, $today) ?>
+            <?php printf(__('Ricevuta #%s del %s', 'generatepresschild' ), $code, $today) ?>
         </h4>
 
         <p>

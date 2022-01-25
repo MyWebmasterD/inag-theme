@@ -245,7 +245,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }, 10, 2);
 
     /* Add Stripe fee to membership payment */
-    /*add_filter('pmpro_checkout_level', function ($level) {
+    add_filter('pmpro_checkout_level', function ($level) {
         global $gateway;
 
         if ($gateway == 'stripe') {
@@ -254,7 +254,16 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         }
      
         return $level;
-    });*/
+    });
+
+    /* Add custom notice about Stripe extra fee */
+    add_action('pmpro_checkout_after_payment_information_fields', function () {
+        ?>
+            <div class="pmpro-checkout-notice">
+                <p><?= __('Per i pagamenti con carta verrà applicata una commissione di 2,50€', 'generatepresschild') ?></p>
+            </div>
+        <?php
+    });
 
     if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
         

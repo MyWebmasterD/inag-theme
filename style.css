@@ -192,6 +192,10 @@
 
 /*=============== PMPro styles ===============*/
 
+#pmpro_payment_information_fields {
+    margin-bottom: 1em;
+}
+
 .pmpro_checkout-field-bfirstname, .pmpro_checkout-field-blastname {
     display: none;
 }
@@ -258,6 +262,28 @@ form.pmpro_form .pmpro_checkout .pmpro_checkout-fields, #fiscal_code_div {
 
 form.pmpro_form .pmpro_submit {
     text-align: center;
+}
+
+#pmpro_payment_method {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pmpro-checkout-notice {
+    max-width: 340px;
+    margin: 0 auto 2em;
+    padding: 0.75em;
+    background: #d59289;
+    color: #fff;
+    border: 1px solid #97464c;
+    border-radius: 4px;
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.pmpro-checkout-notice p {
+    margin-bottom: 0 !important;
 }
 
 .pmpro_clp_post:not(:last-child) {
@@ -369,6 +395,13 @@ form.pmpro_form .pmpro_submit {
         width: 100% !important;
     }
 
+}
+
+@media (max-width: 374px) {
+    #pmpro_payment_method .pmpro_radio {
+        display: inline-block;
+        width: 86%;
+    }
 }
 
 @media (max-width: 350px) {
