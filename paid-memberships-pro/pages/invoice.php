@@ -3,7 +3,7 @@
 <div class="<?= pmpro_get_element_class('pmpro_confirmation_wrap') ?>">
     <div class="printable-invoice">
         <div class="header">
-            <img src="<?= get_stylesheet_directory_uri() . '/img/logo-inag-md.png' ?>" class="float-right" width="126" height="125" alt="INAG logo">
+            <img src="<?= site_url('/wp-content/uploads/logo-inag-lg.png') ?>" class="float-right" width="126" height="125" alt="INAG logo">
             <p>INAG<br>Via Tirso 26<br>00198<br>Roma<br>CF 97593430586</p>
         </div>
 
@@ -50,7 +50,7 @@
 
                 <p><?php _e('Le ricevute relative all’incasso delle quote associative non sono assoggettate all’imposta di bollo.', 'generatepresschild') ?></p>
 
-                <img src="<?= get_stylesheet_directory_uri() . '/img/digital-signature.jpeg' ?>" class="float-right" width="200" height="128" alt="Firma del presidente">
+                <img src="<?= site_url('/wp-content/uploads/digital-signature.jpeg') ?>" class="float-right" width="200" height="128" alt="Firma del presidente">
 
                 <div class="clear-float"></div>
             <?php } else { ?>

@@ -270,7 +270,7 @@ form.pmpro_form .pmpro_submit {
     margin-right: auto;
 }
 
-.pmpro-checkout-notice {
+#pmpro-stripe-notice {
     max-width: 340px;
     margin: 0 auto 2em;
     padding: 0.75em;
@@ -282,7 +282,7 @@ form.pmpro_form .pmpro_submit {
     font-weight: bold;
 }
 
-.pmpro-checkout-notice p {
+#pmpro-stripe-notice p {
     margin-bottom: 0 !important;
 }
 

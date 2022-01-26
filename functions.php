@@ -162,6 +162,9 @@ if (in_array(TEAM_MEMBERS_PLUGIN, $active_plugins)) {
 }
 
 if (in_array(PMPRO_PLUGIN, $active_plugins)) {
+
+    /* Load PMPro custom JS */
+    wp_enqueue_script('pmpro', get_stylesheet_directory_uri() . '/js/pmpro.js', array('jquery'));
 	
 	/* Make PMPro 'First Name' and 'Last Name' billing fields not required */
 	add_action('pmpro_required_billing_fields', function ($fields) {
@@ -245,22 +248,20 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }, 10, 2);
 
     /* Add Stripe fee to membership payment */
-    add_filter('pmpro_checkout_level', function ($level) {
-        global $gateway;
-
-        if ($gateway == 'stripe') {
+    /*add_filter('pmpro_checkout_level', function ($level) {
+        if (!empty($_REQUEST['gateway']) && ($_REQUEST['gateway'] == 'stripe')) {
             $level->initial_payment = $level->initial_payment + STRIPE_FEE; // Updates initial payment value
             $level->billing_amount = $level->billing_amount + STRIPE_FEE; // Updates recurring payment value
         }
-     
+
         return $level;
-    });
+    });*/
 
     /* Add custom notice about Stripe extra fee */
     add_action('pmpro_checkout_after_payment_information_fields', function () {
         ?>
-            <div class="pmpro-checkout-notice">
-                <p><?= __('Per i pagamenti con carta verrà applicata una commissione di 2,50€', 'generatepresschild') ?></p>
+            <div id="pmpro-stripe-notice">
+                <p><?php printf(__('Per i pagamenti con carta verrà applicata una commissione di %s€', 'generatepresschild'), STRIPE_FEE) ?></p>
             </div>
         <?php
     });
