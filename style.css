@@ -118,7 +118,7 @@
 }
 
 @media (min-width: 900px) {
-	
+
 	.wpcf7 .privacy-policy-check-wrapper, .wpcf7 .wpcf7-submit-wrapper {
         display: inline-block;
     }
@@ -134,7 +134,7 @@
     .wpcf7 .wpcf7-submit-wrapper .ajax-loader {
         margin-top: 0.75em;
     }
-	
+
 }
 
 
@@ -271,15 +271,14 @@ form.pmpro_form .pmpro_submit {
 }
 
 #pmpro-stripe-notice {
-    max-width: 340px;
-    margin: 0 auto 2em;
-    padding: 0.75em;
-    background: #d59289;
-    color: #fff;
-    border: 1px solid #97464c;
-    border-radius: 4px;
-    font-size: smaller;
-    font-weight: bold;
+  max-width: 340px;
+  margin: 0 auto 2em;
+  padding: 0.75em;
+  border-radius: 4px;
+  color: #24264c;
+  font-size: smaller;
+  font-weight: bold;
+  font-style: italic;
 }
 
 #pmpro-stripe-notice p {
