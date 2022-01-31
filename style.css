@@ -118,7 +118,7 @@
 }
 
 @media (min-width: 900px) {
-	
+
 	.wpcf7 .privacy-policy-check-wrapper, .wpcf7 .wpcf7-submit-wrapper {
         display: inline-block;
     }
@@ -134,7 +134,7 @@
     .wpcf7 .wpcf7-submit-wrapper .ajax-loader {
         margin-top: 0.75em;
     }
-	
+
 }
 
 
