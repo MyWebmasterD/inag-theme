@@ -248,14 +248,22 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }, 10, 2);
 
     /* Add Stripe fee to membership payment */
-    /*add_filter('pmpro_checkout_level', function ($level) {
+    add_filter('pmpro_checkout_level', function ($level) {
         if (!empty($_REQUEST['gateway']) && ($_REQUEST['gateway'] == 'stripe')) {
-            $level->initial_payment = $level->initial_payment + STRIPE_FEE; // Updates initial payment value
-            $level->billing_amount = $level->billing_amount + STRIPE_FEE; // Updates recurring payment value
+
+            // Update initial payment value if using one-time payment
+            if ($level->initial_payment > 0) {
+                $level->initial_payment = $level->initial_payment + STRIPE_FEE;
+            }
+
+            // Update billing amount value if using recurring payment
+            if ($level->billing_amount > 0) {
+                $level->billing_amount = $level->billing_amount + STRIPE_FEE;
+            }
         }
 
         return $level;
-    });*/
+    });
 
     /* Add custom notice about Stripe extra fee */
     add_action('pmpro_checkout_after_payment_information_fields', function () {

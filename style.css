@@ -274,12 +274,11 @@ form.pmpro_form .pmpro_submit {
     max-width: 340px;
     margin: 0 auto 2em;
     padding: 0.75em;
-    background: #d59289;
-    color: #fff;
-    border: 1px solid #97464c;
     border-radius: 4px;
+    color: #24264c;
     font-size: smaller;
     font-weight: bold;
+    font-style: italic;
 }
 
 #pmpro-stripe-notice p {
