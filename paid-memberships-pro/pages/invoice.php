@@ -13,7 +13,6 @@
             if (!empty($pmpro_invoice) && !empty($pmpro_invoice->id)) {
                 $pmpro_invoice->getUser();
                 $pmpro_invoice->getMembershipLevel();
-                $formatted_total = number_format((float)$pmpro_invoice->total, 2, ',', ' ');
                 $payment_year = date('Y', $pmpro_invoice->timestamp);
 
                 if (empty($pmpro_invoice->gateway)) {
@@ -39,13 +38,13 @@
                 </p>
 
                 <p>
-                    <?php printf(__('Si attesta di aver ricevuto la somma di euro %s con', 'generatepresschild' ), $formatted_total) ?><br>
+                    <?php printf(__('Si attesta di aver ricevuto la somma di euro %s con', 'generatepresschild' ), MEMBERSHIP_COST) ?><br>
                     <strong><?php _e('Metodo di Pagamento', 'generatepresschild') ?></strong>: <?= $payment_method ?>
                 </p>
 
                 <p>
                     <?php _e('Per la seguente causale:', 'generatepresschild') ?><br>
-                    <?php printf(__('- Euro %s quota associativa anno %s/%s', 'generatepresschild' ), $formatted_total, $payment_year, (int)$payment_year + 1) ?>
+                    <?php printf(__('- Euro %s quota associativa anno %s/%s', 'generatepresschild' ), MEMBERSHIP_COST, $payment_year, (int)$payment_year + 1) ?>
                 </p>
 
                 <p><?php _e('Le ricevute relative all’incasso delle quote associative non sono assoggettate all’imposta di bollo.', 'generatepresschild') ?></p>

@@ -380,6 +380,14 @@ form.pmpro_form .pmpro_submit {
     padding: 2px 0 2px 24px;
 }
 
+#pmpro_account-membership .pmpro_account-membership-levelfee * {
+    visibility: hidden;
+}
+
+#pmpro_account-membership .pmpro_account-membership-levelfee strong {
+    visibility: visible;
+}
+
 @media (max-width: 599px) {
 
     .pmpro_custom_confirmation_actions p {
@@ -561,6 +569,10 @@ form.pmpro_form .pmpro_submit {
 
 .comment-form #comment {
     height: 9.5rem;
+}
+
+.generate-back-to-top {
+    bottom: 88px !important;
 }
 
 .site-footer .menu-item a::before {

@@ -5,6 +5,7 @@ define('TEAM_MEMBERS_PLUGIN', 'team-members/tmm.php');
 define('PMPRO_PLUGIN', 'paid-memberships-pro/paid-memberships-pro.php');
 define('PMPRO_REGISTER_HELPER_PLUGIN', 'pmpro-register-helper/pmpro-register-helper.php');
 define('STRIPE_FEE', 2.65);
+define('MEMBERSHIP_COST', '100,00');
 
 /* Rearrange nav bar for logged in/out users */
 add_filter('wp_nav_menu_objects', function($items, $args) {
@@ -238,15 +239,6 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         }
     });
 
-    /* Change email address for all admin related emails in PMPro */
-    add_filter('pmpro_email_recipient', function ($user_email, $email) {		
-        if (strpos($email->template, '_admin') !== false) {
-            $user_email = 'info@inag.it';
-        }
-        
-        return $user_email;
-    }, 10, 2);
-
     /* Add Stripe fee to membership payment */
     add_filter('pmpro_checkout_level', function ($level) {
         if (!empty($_REQUEST['gateway']) && ($_REQUEST['gateway'] == 'stripe')) {
@@ -274,57 +266,69 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         <?php
     });
 
-    if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
-        
-        /* Overriding user confirmation email template */
-        add_filter('pmpro_email_filter', function ($email) {
+    /* Change email address for all admin related emails in PMPro */
+    add_filter('pmpro_email_recipient', function ($user_email, $email) {
+        if (strpos($email->template, '_admin') !== false) {
+            $user_email = 'info@inag.it';
+        }
 
-            // Only override user confirmation emails that have invoices
-            if (
-                empty($email) || (strpos($email->template, 'checkout') === false) ||
-                (strpos($email->template, 'admin') !== false) || empty($email->data['invoice_id'])
-            ) {
-                return $email;
-            }
+        return $user_email;
+    }, 10, 2);
 
-            $order = new MemberOrder($email->data['invoice_id']);
+    /* Override confirmation email template */
+    add_filter('pmpro_email_filter', function ($email) {
 
-            // Make sure we have a real order
-            if (empty($order) || empty($order->id)) {
-                return $email;
-            }
-
-            // Update subject
-            $email->subject = 'Conferma di associazione a INAG.';
-
-            // Loading invoice values
-            $code = $order->code;
-            $name = $order->billing->name;
-            $street = $order->billing->street;
-            $state = $order->billing->state;
-            $zip = $order->billing->zip;
-            $country = $order->billing->country;
-            $today = date_i18n(get_option('date_format'), $order->timestamp);
-            $formatted_total = number_format((float)$order->total, 2, ',', ' ');
-            $payment_year = date('Y', $order->timestamp);
-
-            if (empty($order->gateway)) {
-                $payment_method = __('Test', 'generatepresschild');
-            } elseif ($order->gateway == 'check') {
-                $payment_method = __('Bonifico', 'generatepresschild');
-            } elseif ($order->gateway == 'stripe') {
-                $payment_method = __('Carta di credito', 'generatepresschild');
-            } else {
-                $payment_method = __('Non specificato', 'generatepresschild');
-            }
-
-            // Update body
-            ob_start();
-            include 'email/checkout.php';
-            $email->body = ob_get_clean();
-
+        // Only override confirmation emails that have invoices
+        if (empty($email) || (strpos($email->template, 'checkout') === false) || empty($email->data['invoice_id'])) {
             return $email;
-        });
+        }
+
+        $order = new MemberOrder($email->data['invoice_id']);
+
+        // Make sure we have a real order
+        if (empty($order) || empty($order->id)) {
+            return $email;
+        }
+
+        // Update subject
+        $email->subject = 'Conferma di associazione a INAG.';
+
+        // Loading invoice values
+        $code = $order->code;
+        $name = $order->billing->name;
+        $street = $order->billing->street;
+        $state = $order->billing->state;
+        $zip = $order->billing->zip;
+        $country = $order->billing->country;
+        $today = date_i18n(get_option('date_format'), $order->timestamp);
+        $formatted_total = number_format((float)$order->total, 2, ',', ' ');
+        $payment_year = date('Y', $order->timestamp);
+
+        if (empty($order->gateway)) {
+            $payment_method = __('Test', 'generatepresschild');
+        } elseif ($order->gateway == 'check') {
+            $payment_method = __('Bonifico', 'generatepresschild');
+        } elseif ($order->gateway == 'stripe') {
+            $payment_method = __('Carta di credito', 'generatepresschild');
+        } else {
+            $payment_method = __('Non specificato', 'generatepresschild');
+        }
+
+        // Update body
+        ob_start();
+        include 'email/checkout.php';
+        $email->body = ob_get_clean();
+
+        return $email;
+    });
+
+    /* Remove membership cancel button on profile page */
+    add_filter('pmpro_member_action_links', function ($pmpro_member_action_links) {
+        unset($pmpro_member_action_links['cancel']);
+        return $pmpro_member_action_links;
+    }, 15, 1);
+
+    if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
 
         /* Adding the Fiscal Code column to the Users table */
         add_action('manage_users_columns', function ($column_headers) {
@@ -347,7 +351,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }
 }
 
-/* Adding new block styles to Gutenberg */
+/* Add new block styles to Gutenberg */
 add_action('enqueue_block_editor_assets', function () {
     wp_enqueue_style('editor-style', get_stylesheet_directory_uri() . '/editor-style.css', false, '1.0.0');
 
