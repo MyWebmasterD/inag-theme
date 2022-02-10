@@ -285,6 +285,10 @@ form.pmpro_form .pmpro_submit {
     margin-bottom: 0 !important;
 }
 
+small#pmprosp-password-notice {
+    font-size: 11px;
+}
+
 .pmpro_clp_post:not(:last-child) {
     padding-bottom: 80px;
 }
