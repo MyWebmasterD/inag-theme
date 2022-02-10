@@ -166,7 +166,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
 
     /* Load PMPro custom JS */
     wp_enqueue_script('pmpro', get_stylesheet_directory_uri() . '/js/pmpro.js', array('jquery'));
-	
+
 	/* Make PMPro 'First Name' and 'Last Name' billing fields not required */
 	add_action('pmpro_required_billing_fields', function ($fields) {
 		if(is_array($fields)) {
@@ -266,6 +266,14 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         <?php
     });
 
+    /* Use the pmpro_default_country filter to pre-set the dropdown at checkout to your country of choice. */
+    function my_set_pmpro_default_country( $default_country ) {
+        // Set country code to "GB" for United Kingdom.
+        $default_country = "IT";
+        return $default_country;
+    }
+    add_filter( 'pmpro_default_country', 'my_set_pmpro_default_country' );
+
     /* Change email address for all admin related emails in PMPro */
     add_filter('pmpro_email_recipient', function ($user_email, $email) {
         if (strpos($email->template, '_admin') !== false) {
@@ -347,7 +355,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         add_action('manage_users_custom_column', function ($value, $column_name, $user_id) {
             return $column_name == 'fiscal_code' ? get_user_meta($user_id, 'fiscal_code', true) : $value;
         }, 10, 3);
-        
+
     }
 }
 
@@ -377,7 +385,7 @@ if ( get_role('wpseo_editor') ) {
 /* Remove default dashoboard widgets */
 add_action('wp_dashboard_setup', function () {
     global $wp_meta_boxes;
-  
+
     unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
     unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
     unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
