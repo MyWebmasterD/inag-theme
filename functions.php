@@ -267,12 +267,9 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     });
 
     /* Use the pmpro_default_country filter to pre-set the dropdown at checkout to your country of choice. */
-    function my_set_pmpro_default_country( $default_country ) {
-        // Set country code to "GB" for United Kingdom.
-        $default_country = "IT";
-        return $default_country;
-    }
-    add_filter( 'pmpro_default_country', 'my_set_pmpro_default_country' );
+    add_filter('pmpro_default_country', function() {
+        return "IT";
+    });
 
     /* Change email address for all admin related emails in PMPro */
     add_filter('pmpro_email_recipient', function ($user_email, $email) {

@@ -230,6 +230,11 @@ form.pmpro_form .pmpro_payment-cvv .input:not(.pmpro_required),
     max-width: 100% !important;
 }
 
+#pmprosp-password-notice,
+.pmpro_checkout-field .pmpro_checkout-field-baddress2 {
+    display: none !important;
+}
+
 .pmpro_checkout-field.pmpro_payment-expiration #ExpirationMonth,
 .pmpro_checkout-field.pmpro_payment-expiration #ExpirationYear {
     width: 44.4% !important;
@@ -283,10 +288,6 @@ form.pmpro_form .pmpro_submit {
 
 #pmpro-stripe-notice p {
     margin-bottom: 0 !important;
-}
-
-small#pmprosp-password-notice {
-    font-size: 11px;
 }
 
 .pmpro_clp_post:not(:last-child) {
