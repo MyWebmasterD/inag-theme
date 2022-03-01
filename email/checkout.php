@@ -41,7 +41,8 @@
             <?= $name ? $name . "<br>" : '' ?>
             <?= $street ? $street . "<br>" : '' ?>
             <?= $state ? $state . "<br>" : '' ?>
-            <?= ($zip ? $zip . " " : '') . $country ?>
+            <?= ($zip ? $zip . " " : '') . $country ?><br>
+            CF <?= get_user_meta(get_current_user_id(), 'fiscal_code', true) ?>
         </p>
 
         <p>

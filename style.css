@@ -231,7 +231,7 @@ form.pmpro_form .pmpro_payment-cvv .input:not(.pmpro_required),
 }
 
 #pmprosp-password-notice,
-.pmpro_checkout-field .pmpro_checkout-field-baddress2 {
+.pmpro_checkout-field.pmpro_checkout-field-baddress2 {
     display: none !important;
 }
 

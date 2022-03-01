@@ -34,7 +34,8 @@
                     <?= $pmpro_invoice->billing->name ? $pmpro_invoice->billing->name . "<br>" : '' ?>
                     <?= $pmpro_invoice->billing->street ? $pmpro_invoice->billing->street . "<br>" : '' ?>
                     <?= $pmpro_invoice->billing->state ? $pmpro_invoice->billing->state . "<br>" : '' ?>
-                    <?= ($pmpro_invoice->billing->zip ? $pmpro_invoice->billing->zip . " " : '') . $pmpro_invoice->billing->country ?>
+                    <?= ($pmpro_invoice->billing->zip ? $pmpro_invoice->billing->zip . " " : '') . $pmpro_invoice->billing->country ?><br>
+                    CF <?= get_user_meta(get_current_user_id(), 'fiscal_code', true) ?>
                 </p>
 
                 <p>
