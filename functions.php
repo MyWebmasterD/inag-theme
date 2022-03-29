@@ -167,11 +167,12 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     /* Load PMPro custom JS */
     wp_enqueue_script('pmpro', get_stylesheet_directory_uri() . '/js/pmpro.js', array('jquery'));
 
-	/* Make PMPro 'First Name' and 'Last Name' billing fields not required */
+    /* Make some PMPro billing fields not required */
 	add_action('pmpro_required_billing_fields', function ($fields) {
 		if(is_array($fields)) {
 			unset($fields['bfirstname']);
 			unset($fields['blastname']);
+			unset($fields['bstate']);
 		}
 
 		return $fields;
@@ -226,6 +227,18 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
                 'label'    => __('Codice Fiscale', 'generatepresschild'),
                 'size'     => 16,
                 'class'    => 'fiscal_code',
+                'profile'  => true,
+                'required' => true,
+            )
+        ));
+
+        pmprorh_add_registration_field('after_billing_fields', new PMProRH_Field(
+            'organization',
+            'text',
+            array(
+                'label'    => __("Iscritto all'ordine (indicare se commercialisti/avvocati e la città)", 'generatepresschild'),
+                'size'     => 64,
+                'class'    => 'origin',
                 'profile'  => true,
                 'required' => true,
             )
@@ -338,19 +351,29 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         /* Adding the Fiscal Code column to the Users table */
         add_action('manage_users_columns', function ($column_headers) {
             unset($column_headers['posts']);
+            unset($column_headers['wfls_2fa_status']);
 
             $offset = array_search('role', array_keys($column_headers));
 
             return array_merge(
                 array_slice($column_headers, 0, $offset),
-                array('fiscal_code' => __('Codice Fiscale', 'generatepresschild')),
+                array(
+                    'fiscal_code'  => __('Codice Fiscale', 'generatepresschild'),
+                    'organization' => __("Iscritto all'ordine", 'generatepresschild'),
+                ),
                 array_slice($column_headers, $offset)
             );
         });
 
         /* Populating the Fiscal Code column in the Users table */
         add_action('manage_users_custom_column', function ($value, $column_name, $user_id) {
-            return $column_name == 'fiscal_code' ? get_user_meta($user_id, 'fiscal_code', true) : $value;
+            if ($column_name == 'fiscal_code') {
+                return get_user_meta($user_id, 'fiscal_code', true);
+            } elseif ($column_name == 'organization') {
+                return get_user_meta($user_id, 'organization', true);
+            } else {
+                return $value;
+            }
         }, 10, 3);
 
     }
