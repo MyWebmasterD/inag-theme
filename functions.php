@@ -4,6 +4,7 @@ $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
 define('TEAM_MEMBERS_PLUGIN', 'team-members/tmm.php');
 define('PMPRO_PLUGIN', 'paid-memberships-pro/paid-memberships-pro.php');
 define('PMPRO_REGISTER_HELPER_PLUGIN', 'pmpro-register-helper/pmpro-register-helper.php');
+define('MAILPOET_PLUGIN', 'mailpoet/mailpoet.php');
 define('STRIPE_FEE', 2.65);
 define('MEMBERSHIP_COST', '100,00');
 
@@ -377,6 +378,15 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         }, 10, 3);
 
     }
+}
+
+if (in_array(MAILPOET_PLUGIN, $active_plugins)) {
+
+    /* Mailpoet filters */
+    add_filter('mailpoet_newsletter_post_excerpt_length', function () {
+        return 0; // Number of words to display
+    });
+
 }
 
 /* Add new block styles to Gutenberg */
