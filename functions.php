@@ -430,4 +430,5 @@ add_action('wp_dashboard_setup', function () {
     remove_meta_box('wpseo-dashboard-overview', 'dashboard', 'side');
 	remove_meta_box('wordfence_activity_report_widget', 'dashboard', 'normal');
 	remove_meta_box('google_dashboard_widget', 'dashboard', 'normal');
+  remove_meta_box('cn_dashboard_stats', 'dashboard', 'normal');
 });
