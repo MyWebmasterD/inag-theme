@@ -347,6 +347,15 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         return $pmpro_member_action_links;
     }, 15, 1);
 
+    /* Allow admins to access PMPro restricted content */
+    add_filter('pmpro_has_membership_access_filter', function ($hasaccess) {
+        if (current_user_can('manage_options')) {
+            $hasaccess = true;
+        }
+
+        return $hasaccess;
+    }, 30);
+
     if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
 
         /* Adding the Fiscal Code column to the Users table */
