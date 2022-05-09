@@ -36,7 +36,7 @@
     <?= $order->billing->street ? $order->billing->street . "<br>" : '' ?>
     <?= $order->billing->state ? $order->billing->state . "<br>" : '' ?>
     <?= ($order->billing->zip ? $order->billing->zip . " " : '') . $order->billing->country ?><br>
-    CF <?= get_user_meta(get_current_user_id(), 'fiscal_code', true) ?>
+    CF <?= get_user_meta($order->getUser()->ID, 'fiscal_code', true) ?>
 </p>
 
 <p>
