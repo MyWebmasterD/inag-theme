@@ -15,8 +15,8 @@ jQuery(document).ready(function($) {
     $("#pmpro_form").submit(function () {
         if ($("#pmpro_payment_method input[name='gateway']:checked").val() === 'check') {
             if (
-                ($("#baddress1").val().trim() === "") || ($("#bcity").val().trim() === "") || ($("#bstate").val().trim() === "") ||
-                ($("#bzipcode").val().trim() === "") || ($("#bcountry").val().trim() === "") || ($("#bphone").val().trim() === "")
+                ($("#baddress1").val().trim() === "") || ($("#bcity").val().trim() === "") || ($("#bzipcode").val().trim() === "") ||
+                ($("#bcountry").val().trim() === "") || ($("#bphone").val().trim() === "")
             ) {
                 pmpro_require_billing = true;
                 setTimeout(function () {$("#pmpro_message").text("Devi compilare tutti i campi richiesti.")}, 200);
