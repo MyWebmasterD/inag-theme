@@ -34,6 +34,7 @@
     <strong><?php _e('Destinatario', 'generatepresschild') ?></strong><br>
     <?= $order->billing->name ? $order->billing->name . "<br>" : '' ?>
     <?= $order->billing->street ? $order->billing->street . "<br>" : '' ?>
+    <?= $order->billing->street ? $order->billing->city . "<br>" : '' ?>
     <?= $order->billing->state ? $order->billing->state . "<br>" : '' ?>
     <?= ($order->billing->zip ? $order->billing->zip . " " : '') . $order->billing->country ?><br>
     CF <?= get_user_meta($order->getUser()->ID, 'fiscal_code', true) ?>
