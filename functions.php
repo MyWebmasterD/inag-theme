@@ -237,7 +237,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
             'organization',
             'text',
             array(
-                'label'    => __("Iscritto all'ordine (indicare se commercialisti/avvocati e la città)", 'generatepresschild'),
+                'label'    => __("Indicare se amministratore, coadiutore o altro e se iscritti ad un ordine professionale (specificare quale e la città)", 'generatepresschild'),
                 'size'     => 64,
                 'class'    => 'origin',
                 'profile'  => true,
