@@ -348,13 +348,14 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
     }, 15, 1);
 
     /* Allow admins to access PMPro restricted content */
-    add_filter('pmpro_has_membership_access_filter', function ($hasaccess) {
-        if (current_user_can('manage_options')) {
-            $hasaccess = true;
-        }
-
-        return $hasaccess;
-    }, 30);
+    function pmmpro_allow_access_for_admins( $hasaccess, $mypost, $myuser, $post_membership_levels ) {
+      // If user is an admin allow access.
+      if ( current_user_can( 'manage_options' ) ) {
+        $hasaccess = true;
+      }
+      return $hasaccess;
+    }
+    add_filter( 'pmpro_has_membership_access_filter', 'pmmpro_allow_access_for_admins', 30, 4 );
 
     if (in_array(PMPRO_REGISTER_HELPER_PLUGIN, $active_plugins)) {
 
