@@ -453,6 +453,11 @@ form.pmpro_form .pmpro_submit {
 
 /*============= Site wide styles =============*/
 
+
+a.wp-block-navigation-item__content {
+    color: #bb984a !important;
+}
+
 .wp-block-button .wp-block-button__link,
 .wp-block-button.is-style-squared .wp-block-button__link {
     border-radius: 0;
