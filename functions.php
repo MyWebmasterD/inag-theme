@@ -347,7 +347,7 @@ if (in_array(PMPRO_PLUGIN, $active_plugins)) {
         return $pmpro_member_action_links;
     }, 15, 1);
 
-    /* Allow admins to access PMPro restricted content  */
+    /* Allow admins to access PMPro restricted content */
     function pmmpro_allow_access_for_admins( $hasaccess, $mypost, $myuser, $post_membership_levels ) {
       // If user is an admin allow access.
       if ( current_user_can( 'manage_options' ) ) {
