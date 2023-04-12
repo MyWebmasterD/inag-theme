@@ -46,13 +46,13 @@
         </p>
 
         <p>
-            <?php printf(__('Si attesta di aver ricevuto la somma di euro %s con', 'generatepresschild' ), $order->total) ?><br>
+            <?php printf(__('Si attesta di aver ricevuto la somma di euro %s con', 'generatepresschild' ), $pmpro_invoice->total) ?><br>
             <strong><?php _e('Metodo di Pagamento', 'generatepresschild') ?></strong>: <?= $payment_method ?>
         </p>
 
         <p>
             <?php _e('Per la seguente causale:', 'generatepresschild') ?><br>
-            <?php printf(__('- Euro %s quota associativa anno %s/%s', 'generatepresschild' ), $order->total, $payment_year, (int)$payment_year + 1) ?>
+            <?php printf(__('- Euro %s quota associativa anno %s/%s', 'generatepresschild' ), $pmpro_invoice->total, $payment_year, (int)$payment_year + 1) ?>
         </p>
 
         <table>
