@@ -46,7 +46,7 @@
 
                 <p>
                     <?php _e('Per la seguente causale:', 'generatepresschild') ?><br>
-                    <?php printf(__('- Euro %s quota associativa anno %s/%s', 'generatepresschild' ), $pmpro_invoice->total, $payment_year, (int)$payment_year + 1) ?>
+                    <?php printf(__('- Euro %s quota associativa anno %s', 'generatepresschild' ), $pmpro_invoice->total, $payment_year) ?>
                 </p>
 
                 <p><?php _e('Le ricevute relative all’incasso delle quote associative non sono assoggettate all’imposta di bollo.', 'generatepresschild') ?></p>
