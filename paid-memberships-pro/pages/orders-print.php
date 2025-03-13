@@ -48,7 +48,7 @@
             }
         ?>
             <h4>
-                <?php printf(__('Ricevuta #%s del %s', 'generatepresschild' ), $order->code, date_i18n(get_option('date_format'), $order->getTimestamp())) ?>
+                <?php printf(__('Ricevuta #%s/%s del %s', 'generatepresschild' ), $order->code, $payment_year, date_i18n(get_option('date_format'), $order->getTimestamp())) ?>
             </h4>
 
             <p>
