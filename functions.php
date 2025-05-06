@@ -412,6 +412,16 @@ add_action('enqueue_block_editor_assets', function () {
     );
 });
 
+/* Aggiunge capability ai membership manager per vedere cf7db */
+function manipulate_editor_capabilities() {
+	$user_role = get_role('pmpro_membership_manager');
+	if ($user_role) {
+		$user_role->add_cap('cfdb7_access');
+	}
+}
+add_action('init', 'manipulate_editor_capabilities');
+
+
 /* Remove Yoast 'SEO Manager' role */
 if ( get_role('wpseo_manager') ) {
     remove_role( 'wpseo_manager' );
