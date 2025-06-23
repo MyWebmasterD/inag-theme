@@ -452,3 +452,43 @@ add_action('wp_dashboard_setup', function () {
 	remove_meta_box('google_dashboard_widget', 'dashboard', 'normal');
   remove_meta_box('cn_dashboard_stats', 'dashboard', 'normal');
 });
+
+/* Google Analytics */
+// Add a Customizer setting and control for Google Analytics 4 Measurement ID
+add_action('customize_register', function($wp_customize) {
+    $wp_customize->add_section('inag_analytics_section', array(
+        'title'    => __('Google Analytics', 'inag'),
+        'priority' => 160,
+    ));
+
+    $wp_customize->add_setting('inag_google_analytics_id', array(
+        'type'              => 'option',
+        'sanitize_callback' => function($input) {
+            // Only allow GA4 Measurement IDs (e.g. G-XXXXXXXXXX)
+            return preg_match('/^G-\w+$/', trim($input)) ? trim($input) : '';
+        },
+    ));
+
+    $wp_customize->add_control('inag_google_analytics_id', array(
+        'label'       => __('Google Analytics Measurement ID', 'inag'),
+        'section'     => 'inag_analytics_section',
+        'type'        => 'text',
+        'description' => __('Inserisci solo il codice GA4 (es: G-XXXXXXXXXX).', 'inag'),
+    ));
+});
+
+// Output the GA4 script in the <head> if the ID is set
+add_action('wp_head', function() {
+    $ga_id = get_option('inag_google_analytics_id');
+    if ($ga_id) : ?>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr($ga_id); ?>"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '<?php echo esc_js($ga_id); ?>');
+</script>
+<!-- End Google Analytics -->
+    <?php endif;
+});
