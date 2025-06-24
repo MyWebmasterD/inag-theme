@@ -17,7 +17,7 @@
 <table style="width: 700px; border: none;">
     <tr>
         <td style="width:75%; border: none; vertical-align: top; padding-right: 20px;">
-            <p>INAG<br>Via Tirso 26<br>00198<br>Roma<br>CF 97593430586</p>
+            <p>INAG<br>Via Guido D'Arezzo 2<br>00198<br>Roma<br>CF 97593430586</p>
         </td>
 
         <td style="border: none; vertical-align: top;">

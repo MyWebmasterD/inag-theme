@@ -23,7 +23,7 @@
         <table>
             <tr>
                 <td style="width:75%; padding-right: 20px;">
-                    <p>INAG<br>Via Tirso 26<br>00198<br>Roma<br>CF 97593430586</p>
+                    <p>INAG<br>Via Guido D'Arezzo 2<br>00198<br>Roma<br>CF 97593430586</p>
                 </td>
 
                 <td>

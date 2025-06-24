@@ -30,7 +30,7 @@
 <body>
 	<header class="header">
         <img src="<?= site_url('/wp-content/uploads/logo-inag-lg.png') ?>" class="right" width="126" height="125" alt="INAG logo">
-        <p>INAG<br>Via Tirso 26<br>00198<br>Roma<br>CF 97593430586</p>
+        <p>INAG<br>Via Guido D'Arezzo 2<br>00198<br>Roma<br>CF 97593430586</p>
 	</header>
 
 	<main class="main">
